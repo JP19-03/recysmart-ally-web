@@ -76,3 +76,10 @@ export const RedeemCouponResponseSchema = z.object({
 export type RedeemCouponFormData = z.infer<typeof RedeemCouponSchema>;
 export type RedeemCouponResponse = z.infer<typeof RedeemCouponResponseSchema>;
 
+export const PartnerMetricsSchema = z.object({
+  todayRedeemsCount: z.number(),
+  totalPointsValidated: z.number(),
+});
+
+export type PartnerMetrics = z.infer<typeof PartnerMetricsSchema>;
+
