@@ -83,3 +83,15 @@ export const PartnerMetricsSchema = z.object({
 
 export type PartnerMetrics = z.infer<typeof PartnerMetricsSchema>;
 
+export const ProfileFormSchema = z.object({
+  companyName: z.string().min(1, "El nombre de la empresa es requerido"),
+  ruc: z.string()
+    .min(11, "El RUC debe tener exactamente 11 dígitos")
+    .max(11, "El RUC debe tener exactamente 11 dígitos")
+    .regex(/^\d+$/, "El RUC debe contener sólo números"),
+  email: z.string().min(1, "El correo electrónico es requerido").email("Email inválido"),
+  role: z.string().optional(),
+});
+
+export type ProfileFormData = z.infer<typeof ProfileFormSchema>;
+

@@ -1,5 +1,6 @@
-import { ErrorResponseSchema, LogInFormData, LogInResponseSchema } from "../schemas";
+import { ErrorResponseSchema, LogInFormData, LogInResponseSchema, UserAPIResponseSchema, User } from "../schemas";
 import { ApiError } from "../utils";
+import { apiFetch } from "../lib/api";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -21,5 +22,11 @@ export const authService = {
         }
 
         return LogInResponseSchema.parse(json);
+    },
+    getProfile: async (token: string): Promise<User> => {
+        const res = await apiFetch<User>("/auth/profile", {
+            method: 'GET'
+        }, token);
+        return UserAPIResponseSchema.parse(res);
     }
 }
