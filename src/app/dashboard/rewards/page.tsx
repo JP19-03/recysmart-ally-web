@@ -6,6 +6,7 @@ import { HelpCircle, Plus } from "lucide-react";
 import { useCompanyRewards } from "@/hooks/useRewards";
 import { RewardCatalogCard } from "@/components/ui";
 import { Reward } from "@/schemas";
+import { CreateRewardDialog } from "./_components/CreateRewardDialog";
 
 type FilterTab = "Todos" | "Activos" | "Poco Stock" | "Pausados";
 
@@ -13,6 +14,7 @@ export default function RewardsCatalogPage() {
   const { data: rewards, isLoading } = useCompanyRewards();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<FilterTab>("Todos");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   // Helper to categorize rewards
   const getRewardCategory = (reward: Reward): FilterTab => {
@@ -105,12 +107,7 @@ export default function RewardsCatalogPage() {
 
           {/* Create Button */}
           <button
-            onClick={() =>
-              toast.info("Crear Recompensa", {
-                description:
-                  "Formulario para registrar nuevo premio próximamente...",
-              })
-            }
+            onClick={() => setIsCreateOpen(true)}
             className="h-11 px-6 bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs transition-all flex items-center justify-center gap-2"
           >
             <Plus className="w-4.5 h-4.5" />
@@ -230,6 +227,12 @@ export default function RewardsCatalogPage() {
           ))
         )}
       </div>
+
+      {/* Create Reward modal overlay drawer */}
+      <CreateRewardDialog
+        open={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+      />
     </div>
   );
 }

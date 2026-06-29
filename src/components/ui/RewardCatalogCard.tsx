@@ -1,5 +1,16 @@
 import React from "react";
+import { Gift, Coffee, Cookie, Utensils, Ticket, ShoppingBag } from "lucide-react";
 import { Reward } from "../../schemas";
+
+function getRewardIcon(title: string) {
+  const lower = title.toLowerCase();
+  if (lower.includes("café") || lower.includes("cafe") || lower.includes("bebida") || lower.includes("cafeteria")) return Coffee;
+  if (lower.includes("galleta") || lower.includes("postre") || lower.includes("dulce")) return Cookie;
+  if (lower.includes("comida") || lower.includes("fruta") || lower.includes("verdura") || lower.includes("alimento") || lower.includes("ensalada")) return Utensils;
+  if (lower.includes("ticket") || lower.includes("entrada") || lower.includes("boleto") || lower.includes("pase")) return Ticket;
+  if (lower.includes("descuento") || lower.includes("compra") || lower.includes("tienda") || lower.includes("bolsa")) return ShoppingBag;
+  return Gift;
+}
 
 interface RewardCatalogCardProps {
   reward: Reward;
@@ -57,9 +68,17 @@ export function RewardCatalogCard({
       className={`w-full bg-card border border-border rounded-3xl overflow-hidden flex flex-col shadow-xs hover:shadow-sm transition-all duration-300 relative ${className}`}
     >
       {/* 1. Header Banner - Cream / Grey depending on state */}
+      {/* 1. Header Banner - Cream / Grey depending on state with context-based icon */}
       <div
-        className={`h-24 md:h-28 relative transition-colors duration-300 ${bannerClass}`}
+        className={`h-24 md:h-28 relative transition-colors duration-300 flex items-center justify-center ${bannerClass}`}
       >
+        {/* Render dynamic icon centered in background banner */}
+        {React.createElement(getRewardIcon(reward.title), {
+          className: `w-10 h-10 md:w-12 md:h-12 transition-colors duration-300 opacity-20 ${
+            isPaused ? "text-gray-500" : isLowStock ? "text-action-orange" : "text-emerald-500"
+          }`
+        })}
+
         {/* Status Badge */}
         <span
           className={`absolute top-4 right-4 text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${badgeClass}`}
