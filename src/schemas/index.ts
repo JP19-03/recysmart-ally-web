@@ -10,7 +10,10 @@ export const ErrorResponseSchema = z.object({
 });
 
 export const DraftLogInSchema = z.object({
-  email: z.string().min(1, "El correo electrónico es requerido").email("Email inválido"),
+  email: z
+    .string()
+    .min(1, "El correo electrónico es requerido")
+    .email("Email inválido"),
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
@@ -23,7 +26,7 @@ export const RewardSchema = z.object({
   totalStock: z.number(),
   remainingStock: z.number(),
   status: z.string(),
-  expiresAt: z.string(),
+  expiresAt: z.string().nullable(),
 });
 
 export const PartnerInfoSchema = z.object({
@@ -58,7 +61,8 @@ export type Reward = z.infer<typeof RewardSchema>;
 export type PartnerInfo = z.infer<typeof PartnerInfoSchema>;
 
 export const RedeemCouponSchema = z.object({
-  code: z.string()
+  code: z
+    .string()
     .min(1, "El código del cupón es requerido")
     .trim()
     .toUpperCase(),
@@ -79,17 +83,67 @@ export type RedeemCouponResponse = z.infer<typeof RedeemCouponResponseSchema>;
 export const PartnerMetricsSchema = z.object({
   todayRedeemsCount: z.number(),
   totalPointsValidated: z.number(),
+  period: z.object({
+    days: z.number(),
+    startsAt: z.string(),
+    endsAt: z.string(),
+    timezone: z.literal("America/Lima"),
+  }),
+  summary: z.object({
+    redeemedCoupons: z.number(),
+    validatedPoints: z.number(),
+    uniqueCustomers: z.number(),
+    conversionRate: z.number(),
+    rewards: z.object({
+      active: z.number(),
+      paused: z.number(),
+      outOfStock: z.number(),
+    }),
+    coupons: z.object({
+      unused: z.number(),
+      expired: z.number(),
+      redeemed: z.number(),
+    }),
+  }),
+  dailyRedemptions: z.array(z.object({ date: z.string(), count: z.number() })),
+  topRewards: z.array(
+    z.object({
+      rewardId: z.string(),
+      title: z.string(),
+      costInPoints: z.number(),
+      redemptions: z.number(),
+    }),
+  ),
+  recentRedemptions: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    totalPages: z.number(),
+    items: z.array(
+      z.object({
+        id: z.string(),
+        clientAlias: z.string(),
+        rewardTitle: z.string(),
+        points: z.number(),
+        redeemedAt: z.string(),
+      }),
+    ),
+  }),
 });
 
 export type PartnerMetrics = z.infer<typeof PartnerMetricsSchema>;
 
 export const ProfileFormSchema = z.object({
   companyName: z.string().min(1, "El nombre de la empresa es requerido"),
-  ruc: z.string()
+  ruc: z
+    .string()
     .min(11, "El RUC debe tener exactamente 11 dígitos")
     .max(11, "El RUC debe tener exactamente 11 dígitos")
     .regex(/^\d+$/, "El RUC debe contener sólo números"),
-  email: z.string().min(1, "El correo electrónico es requerido").email("Email inválido"),
+  email: z
+    .string()
+    .min(1, "El correo electrónico es requerido")
+    .email("Email inválido"),
   role: z.string().optional(),
 });
 
@@ -98,14 +152,15 @@ export type ProfileFormData = z.infer<typeof ProfileFormSchema>;
 export const CreateRewardSchema = z.object({
   title: z.string().min(1, "El título es requerido"),
   description: z.string().min(1, "La descripción es requerida"),
-  costInPoints: z.number({ message: "Debe ingresar un número" })
+  costInPoints: z
+    .number({ message: "Debe ingresar un número" })
     .int("Debe ser un número entero")
     .min(0, "El costo no puede ser negativo"),
-  totalStock: z.number({ message: "Debe ingresar un número" })
+  totalStock: z
+    .number({ message: "Debe ingresar un número" })
     .int("Debe ser un número entero")
     .min(0, "El stock no puede ser negativo"),
   expiresAt: z.string().optional().or(z.literal("")),
 });
 
 export type CreateRewardFormData = z.infer<typeof CreateRewardSchema>;
-
