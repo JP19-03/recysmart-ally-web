@@ -96,6 +96,7 @@ export function Sidebar({
               onClick={() => setCollapsed(true)}
               className="hidden lg:block p-1 rounded-lg hover:bg-canvas-base text-gray-400 hover:text-text-primary transition-colors cursor-pointer"
               title="Colapsar menú"
+              aria-label="Colapsar menú"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -105,6 +106,7 @@ export function Sidebar({
           <button
             onClick={() => setIsOpenMobile && setIsOpenMobile(false)}
             className="block lg:hidden p-1 rounded-lg hover:bg-canvas-base text-gray-400 hover:text-text-primary transition-colors cursor-pointer"
+            aria-label="Cerrar menú móvil"
           >
             <X className="w-6 h-6" />
           </button>
@@ -117,6 +119,7 @@ export function Sidebar({
               onClick={() => setCollapsed(false)}
               className="p-1 rounded-full hover:bg-brand-green hover:text-white text-gray-400 transition-all duration-200 cursor-pointer"
               title="Expandir menú"
+              aria-label="Expandir menú"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -196,6 +199,7 @@ export function Sidebar({
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="p-1.5 rounded-lg text-gray-400 hover:text-error-red hover:bg-error-red/10 transition-colors cursor-pointer"
               title="Cerrar Sesión"
+              aria-label="Cerrar Sesión"
             >
               <LogOut className="w-4 h-4" />
             </button>

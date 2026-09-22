@@ -1,124 +1,130 @@
 "use client";
 
-import React from "react";
-import { toast } from "sonner";
-import {
-  TrendingUp,
-  Award,
-  Users,
-  Percent,
-  Download,
-  Calendar,
-} from "lucide-react";
-
+import { useState } from "react";
+import { Award, Download, Percent, TrendingUp, Users } from "lucide-react";
 import { PerformanceStatCard } from "@/components/dashboard/PerformanceStatCard";
 import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { TopRewardsList } from "@/components/dashboard/TopRewardsList";
 import { TransactionHistoryTable } from "@/components/dashboard/TransactionHistoryTable";
+import { usePartnerMetrics } from "@/hooks/usePartners";
+
+type MetricsPeriod = 7 | 30 | 90;
 
 export default function PerformancePage() {
-  const handleExportReport = () => {
-    toast.success("¡Exportación Exitosa!", {
-      description:
-        "Se ha generado y descargado el reporte de auditoría en formato PDF.",
-    });
-  };
+  const [days, setDays] = useState<MetricsPeriod>(30);
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isError } = usePartnerMetrics(days, page, 10);
 
-  const handlePeriodChange = () => {
-    toast.info("Filtrar Período", {
-      description: "Próximamente: Cambio de rango de fecha para estadísticas.",
-    });
+  const changePeriod = (value: MetricsPeriod) => {
+    setDays(value);
+    setPage(1);
   };
 
   return (
     <div className="space-y-6 md:space-y-8 select-none">
-      {/* 1. Page Header (stacks on mobile, side-by-side on desktop) */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        {/* Title / Description */}
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-black text-text-primary tracking-tight">
             Rendimiento y Estadísticas
           </h1>
           <p className="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-medium">
-            Analiza el impacto de tus recompensas y el tráfico de clientes
-            generado.
+            Métricas reales de las recompensas de tu empresa.
           </p>
         </div>
 
-        {/* Header Action triggers */}
         <div className="flex items-center gap-3 w-full sm:w-auto sm:justify-end">
-          {/* Timeframe Filter Dropdown */}
-          <button
-            onClick={handlePeriodChange}
-            className="w-1/2 sm:w-auto h-11 px-4 bg-card hover:bg-canvas-base border border-border text-text-primary font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
+          <select
+            aria-label="Período de métricas"
+            value={days}
+            onChange={(event) =>
+              changePeriod(Number(event.target.value) as MetricsPeriod)
+            }
+            className="h-11 px-4 bg-card border border-border text-text-primary font-bold text-xs rounded-xl"
           >
-            <Calendar className="w-4 h-4 text-gray-400" />
-            <span>Últimos 30 días</span>
-          </button>
-
-          {/* Export Report Trigger */}
+            <option value={7}>Últimos 7 días</option>
+            <option value={30}>Últimos 30 días</option>
+            <option value={90}>Últimos 90 días</option>
+          </select>
           <button
-            onClick={handleExportReport}
-            className="w-1/2 sm:w-auto h-11 px-5 bg-text-primary hover:bg-text-primary/95 text-card font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+            onClick={() => window.print()}
+            className="h-11 px-5 bg-text-primary text-card font-bold text-xs rounded-xl flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
-            <span>Exportar Reporte</span>
+            <span>Imprimir reporte</span>
           </button>
         </div>
       </div>
 
-      {/* 2. Metrics summary card grids (1 col on mobile, 2 cols on tablet, 4 cols on desktop) */}
+      {isError && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          No fue posible cargar las métricas. Intenta nuevamente.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <PerformanceStatCard
           title="Cupones Canjeados"
-          value="1,240"
+          value={
+            isLoading
+              ? "…"
+              : (data?.summary.redeemedCoupons ?? 0).toLocaleString()
+          }
           icon={Award}
-          badgeText="+12%"
-          badgeType="success"
+          badgeType="none"
           iconTheme="green"
         />
         <PerformanceStatCard
-          title="Puntos Recaudados"
-          value="45.2k"
+          title="Puntos Validados"
+          value={
+            isLoading
+              ? "…"
+              : (data?.summary.validatedPoints ?? 0).toLocaleString()
+          }
           icon={TrendingUp}
-          badgeText="+8%"
-          badgeType="success"
+          badgeType="none"
           iconTheme="blue"
         />
         <PerformanceStatCard
           title="Clientes Únicos"
-          value="842"
+          value={
+            isLoading
+              ? "…"
+              : (data?.summary.uniqueCustomers ?? 0).toLocaleString()
+          }
           icon={Users}
-          badgeText="Manteniéndose"
-          badgeType="neutral"
+          badgeType="none"
           iconTheme="purple"
         />
         <PerformanceStatCard
-          title="Tasa de Conversión"
-          value="68%"
+          title="Conversión de Cupones"
+          value={isLoading ? "…" : `${data?.summary.conversionRate ?? 0}%`}
           icon={Percent}
           badgeType="none"
           iconTheme="orange"
         />
       </div>
 
-      {/* 3. Midsection details (Chart left, Leaderboard right) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-        {/* Performance Chart bar layout (spanning 2 columns on desktop) */}
         <div className="lg:col-span-2 flex">
-          <PerformanceChart />
+          <PerformanceChart data={data?.dailyRedemptions ?? []} />
         </div>
-
-        {/* Top Product leaderboard layout (spanning 1 column on desktop) */}
         <div className="lg:col-span-1 flex">
-          <TopRewardsList />
+          <TopRewardsList rewards={data?.topRewards ?? []} />
         </div>
       </div>
 
-      {/* 4. Bottom section: horizontaly scrollable transaction table */}
-      <div>
-        <TransactionHistoryTable />
-      </div>
+      <TransactionHistoryTable
+        data={
+          data?.recentRedemptions ?? {
+            page,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+            items: [],
+          }
+        }
+        onPageChange={setPage}
+      />
     </div>
   );
 }

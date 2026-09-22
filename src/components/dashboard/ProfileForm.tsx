@@ -38,7 +38,7 @@ export function ProfileForm({ form, isLoading }: ProfileFormProps) {
 
           <button
             type="button"
-            disabled={isLoading}
+            disabled={true}
             onClick={() =>
               toast.info("Cambiar imagen", {
                 description: "Carga de archivos multimedia próximamente...",
@@ -64,7 +64,7 @@ export function ProfileForm({ form, isLoading }: ProfileFormProps) {
           <input
             id="companyName"
             type="text"
-            disabled={isLoading}
+            disabled={true}
             placeholder="EcoCafe Central"
             {...register("companyName")}
             className={`w-full h-11 px-4 border rounded-xl bg-card text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-all ${
@@ -89,7 +89,7 @@ export function ProfileForm({ form, isLoading }: ProfileFormProps) {
           <input
             id="ruc"
             type="text"
-            disabled={isLoading}
+            disabled={true}
             placeholder="20123456789"
             {...register("ruc")}
             className={`w-full h-11 px-4 border rounded-xl bg-card text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-all ${
@@ -114,7 +114,7 @@ export function ProfileForm({ form, isLoading }: ProfileFormProps) {
           <input
             id="email"
             type="email"
-            disabled={isLoading}
+            disabled={true}
             placeholder="gerencia@ecocafe.com"
             {...register("email")}
             className={`w-full h-11 px-4 border rounded-xl bg-card text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-all ${

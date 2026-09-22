@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { HelpCircle, Plus } from "lucide-react";
-import { useCompanyRewards } from "@/hooks/useRewards";
+import {
+  useAddRewardStock,
+  useCompanyRewards,
+  useSetRewardStatus,
+} from "@/hooks/useRewards";
 import { RewardCatalogCard } from "@/components/ui";
 import { Reward } from "@/schemas";
 import { CreateRewardDialog } from "./_components/CreateRewardDialog";
@@ -11,10 +15,15 @@ import { CreateRewardDialog } from "./_components/CreateRewardDialog";
 type FilterTab = "Todos" | "Activos" | "Poco Stock" | "Pausados";
 
 export default function RewardsCatalogPage() {
-  const { data: rewards, isLoading } = useCompanyRewards();
+  const pageSize = 20;
+  const [page, setPage] = useState(1);
+  const { data: rewards, isLoading } = useCompanyRewards(page, pageSize);
+  const setRewardStatus = useSetRewardStatus();
+  const addRewardStock = useAddRewardStock();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<FilterTab>("Todos");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingReward, setEditingReward] = useState<Reward | null>(null);
 
   // Helper to categorize rewards
   const getRewardCategory = (reward: Reward): FilterTab => {
@@ -57,24 +66,59 @@ export default function RewardsCatalogPage() {
 
   // Action handlers
   const handleEdit = (reward: Reward) => {
-    toast.info("Editar Recompensa", {
-      description: `Editando: ${reward.title}. Formulario próximamente disponible.`,
-    });
+    setEditingReward(reward);
+    setIsCreateOpen(true);
   };
 
   const handleToggleStatus = (reward: Reward) => {
     const isPaused =
       reward.status === "PAUSED" || reward.status === "DISCONTINUED";
-    const action = isPaused ? "reactivar" : "pausar";
-    toast.info(`Cambiar Estado`, {
-      description: `Solicitud para ${action} la recompensa: ${reward.title}.`,
-    });
+    setRewardStatus.mutate(
+      {
+        rewardId: reward.id,
+        status: isPaused ? "ACTIVE" : "DISCONTINUED",
+      },
+      {
+        onSuccess: (updated) =>
+          toast.success(
+            updated.status === "ACTIVE"
+              ? "Recompensa reactivada"
+              : updated.status === "OUT_OF_STOCK"
+                ? "Recompensa sin stock"
+                : "Recompensa pausada",
+          ),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   const handleAddStock = (reward: Reward) => {
-    toast.info("Añadir Stock", {
-      description: `Incrementando stock para: ${reward.title}.`,
-    });
+    const rawAmount = window.prompt(
+      `¿Cuántas unidades deseas añadir a "${reward.title}"?`,
+    );
+    if (rawAmount === null) return;
+    const amount = Number(rawAmount);
+    if (!Number.isInteger(amount) || amount <= 0) {
+      toast.error("Ingresa una cantidad entera mayor que cero.");
+      return;
+    }
+    addRewardStock.mutate(
+      { rewardId: reward.id, amount },
+      {
+        onSuccess: () => toast.success(`Se añadieron ${amount} unidades.`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
+  };
+
+  const openCreateDialog = () => {
+    setEditingReward(null);
+    setIsCreateOpen(true);
+  };
+
+  const closeRewardDialog = () => {
+    setIsCreateOpen(false);
+    setEditingReward(null);
   };
 
   return (
@@ -107,7 +151,7 @@ export default function RewardsCatalogPage() {
 
           {/* Create Button */}
           <button
-            onClick={() => setIsCreateOpen(true)}
+            onClick={openCreateDialog}
             className="h-11 px-6 bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs transition-all flex items-center justify-center gap-2"
           >
             <Plus className="w-4.5 h-4.5" />
@@ -178,25 +222,25 @@ export default function RewardsCatalogPage() {
             >
               <div className="h-24 md:h-28 bg-canvas-base"></div>
               <div className="p-6 flex-1 space-y-4">
-                <div className="space-y-2">
-                  <div className="h-4 w-2/3 bg-canvas-base rounded-md"></div>
-                  <div className="h-3 w-5/6 bg-canvas-base rounded-md"></div>
+                <div className="space-y-1">
+                  <div className="h-5 w-2/3 bg-canvas-base rounded-md"></div>
+                  <div className="h-8 w-5/6 bg-canvas-base rounded-md"></div>
                 </div>
                 <div className="grid grid-cols-2 items-end pt-2">
-                  <div className="space-y-2">
-                    <div className="h-2 w-12 bg-canvas-base rounded-md"></div>
-                    <div className="h-5 w-16 bg-canvas-base rounded-md"></div>
+                  <div className="space-y-1">
+                    <div className="h-2.5 w-12 bg-canvas-base rounded-md"></div>
+                    <div className="h-7 w-16 bg-canvas-base rounded-md"></div>
                   </div>
-                  <div className="space-y-2 flex flex-col items-end">
-                    <div className="h-2 w-8 bg-canvas-base rounded-md"></div>
+                  <div className="space-y-1 flex flex-col items-end">
+                    <div className="h-2.5 w-8 bg-canvas-base rounded-md"></div>
                     <div className="h-4 w-10 bg-canvas-base rounded-md"></div>
                   </div>
                 </div>
                 <div className="h-1.5 w-full bg-canvas-base rounded-full"></div>
               </div>
               <div className="border-t border-border px-6 py-4 bg-canvas-base/30 flex items-center justify-between min-h-15">
-                <div className="h-6 w-14 bg-canvas-base rounded-lg"></div>
-                <div className="h-6 w-14 bg-canvas-base rounded-lg"></div>
+                <div className="h-7 w-20 bg-canvas-base rounded-lg"></div>
+                <div className="h-7 w-20 bg-canvas-base rounded-lg"></div>
               </div>
             </div>
           ))
@@ -228,10 +272,33 @@ export default function RewardsCatalogPage() {
         )}
       </div>
 
+      {(page > 1 || (rewards?.length ?? 0) === pageSize) && (
+        <div className="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            disabled={page === 1 || isLoading}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
+            className="px-4 py-2 rounded-xl border border-border text-xs font-bold disabled:opacity-40"
+          >
+            Anterior
+          </button>
+          <span className="text-xs font-bold text-gray-400">Página {page}</span>
+          <button
+            type="button"
+            disabled={(rewards?.length ?? 0) < pageSize || isLoading}
+            onClick={() => setPage((current) => current + 1)}
+            className="px-4 py-2 rounded-xl border border-border text-xs font-bold disabled:opacity-40"
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
+
       {/* Create Reward modal overlay drawer */}
       <CreateRewardDialog
         open={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
+        onClose={closeRewardDialog}
+        reward={editingReward}
       />
     </div>
   );

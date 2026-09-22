@@ -16,11 +16,20 @@ export const authService = {
             body: JSON.stringify(data),
         });
 
-        const json = await res.json();
+        let json;
+        try {
+            json = await res.json();
+        } catch {
+            throw new ApiError(["Error de conexión con el servidor (Respuesta no válida)"]);
+        }
 
         if (!res.ok) {
-            const error = ErrorResponseSchema.parse(json);
-            throw new ApiError(error.message);
+            const error = ErrorResponseSchema.safeParse(json);
+            if (error.success) {
+                throw new ApiError(error.data.message);
+            } else {
+                throw new ApiError([json.message || "Error desconocido al iniciar sesión"]);
+            }
         }
 
         return LogInResponseSchema.parse(json);

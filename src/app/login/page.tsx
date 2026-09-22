@@ -49,7 +49,7 @@ export default function Login() {
         router.push("/");
         router.refresh();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setFormError("Ocurrió un error inesperado al conectar con el servidor.");
     } finally {

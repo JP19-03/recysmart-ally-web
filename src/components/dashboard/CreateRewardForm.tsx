@@ -4,9 +4,14 @@ import { CreateRewardFormData } from "@/schemas";
 interface CreateRewardFormProps {
   form: UseFormReturn<CreateRewardFormData>;
   isLoading: boolean;
+  isEditing?: boolean;
 }
 
-export function CreateRewardForm({ form, isLoading }: CreateRewardFormProps) {
+export function CreateRewardForm({
+  form,
+  isLoading,
+  isEditing = false,
+}: CreateRewardFormProps) {
   const {
     register,
     formState: { errors },
@@ -97,12 +102,12 @@ export function CreateRewardForm({ form, isLoading }: CreateRewardFormProps) {
             htmlFor="totalStock"
             className="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-wider block"
           >
-            Stock Inicial *
+            {isEditing ? "Stock (use Añadir stock)" : "Stock Inicial *"}
           </label>
           <input
             id="totalStock"
             type="number"
-            disabled={isLoading}
+            disabled={isLoading || isEditing}
             placeholder="50"
             {...register("totalStock", { valueAsNumber: true })}
             className={`w-full h-11 px-4 border rounded-xl bg-card text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green transition-all ${

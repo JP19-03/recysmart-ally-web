@@ -10,7 +10,7 @@ import { ProfileCard } from "./_components/ProfileCard";
 
 export default function ProfilePage() {
   const { data: profile, isLoading } = useProfile();
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving] = useState(false);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(ProfileFormSchema),
@@ -32,33 +32,6 @@ export default function ProfilePage() {
     }
   }, [profile, form]);
 
-  const onSubmit = (data: ProfileFormData) => {
-    setIsSaving(true);
-    // Simulate API update call since no backend profile update exists yet
-    setTimeout(() => {
-      setIsSaving(false);
-      toast.success("¡Perfil Actualizado!", {
-        description: "Los cambios se han guardado exitosamente en el sistema.",
-      });
-      // Reset form to keep current values as clean baseline state
-      form.reset(data);
-    }, 1000);
-  };
-
-  const handleDiscard = () => {
-    if (profile) {
-      form.reset({
-        companyName: profile.partner?.companyName ?? "",
-        ruc: profile.partner?.ruc ?? "",
-        email: profile.email ?? "",
-      });
-      toast.info("Cambios descartados", {
-        description:
-          "Los campos del perfil se han restaurado a sus valores iniciales.",
-      });
-    }
-  };
-
   return (
     <div className="space-y-6 md:space-y-8 select-none">
       {/* 1. Page Header (stacks vertically on mobile, aligns side-by-side on desktop) */}
@@ -73,25 +46,11 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        {/* Header Actions (Descartar and Guardar buttons) */}
+        {/* Header Actions (Read-only badge) */}
         <div className="flex items-center gap-3 w-full sm:w-auto sm:justify-end">
-          <button
-            type="button"
-            disabled={isLoading || isSaving}
-            onClick={handleDiscard}
-            className="w-1/2 sm:w-auto h-11 px-6 bg-card hover:bg-canvas-base border border-border text-text-primary font-bold text-sm rounded-xl transition-all cursor-pointer disabled:opacity-50"
-          >
-            Descartar
-          </button>
-
-          <button
-            type="button"
-            disabled={isLoading || isSaving}
-            onClick={form.handleSubmit(onSubmit)}
-            className="w-1/2 sm:w-auto h-11 px-6 bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white font-bold text-sm rounded-xl cursor-pointer shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            {isSaving ? "Guardando..." : "Guardar Cambios"}
-          </button>
+          <span className="text-xs font-medium text-gray-400 bg-canvas-base px-3 py-1.5 rounded-lg border border-border">
+            Modo Consulta
+          </span>
         </div>
       </div>
 

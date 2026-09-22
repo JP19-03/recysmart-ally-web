@@ -24,6 +24,9 @@ export const authOptions: NextAuthOptions = {
           const res = await authService.login({ email, password });
 
           if (res && res.token) {
+            if (res.user.role !== "ALLY") {
+              throw new Error("Acceso denegado. Se requiere cuenta de Comercio Aliado.");
+            }
             return {
               id: res.user.id,
               name: res.user.name,
@@ -34,9 +37,12 @@ export const authOptions: NextAuthOptions = {
           }
 
           return null;
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("Error in authorize:", error);
-          throw new Error(error.message || "Error al iniciar sesión");
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+          throw new Error("Error al iniciar sesión");
         }
       }
     })

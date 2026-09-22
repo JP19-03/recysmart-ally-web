@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { RedeemCouponFormData } from "@/schemas";
-import { Ticket, Scan, ShieldCheck } from "lucide-react";
+import { Scan, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 interface RedeemCouponFormProps {
@@ -25,7 +25,7 @@ export function RedeemCouponForm({ form, isLoading }: RedeemCouponFormProps) {
           <input
             id="code"
             type="text"
-            placeholder="EJ: RECY-A1B2C3"
+            placeholder="EJ: RECY-A1B2C3D4E5F6..."
             disabled={isLoading}
             {...register("code")}
             className="w-full text-center py-4 bg-transparent outline-none font-mono text-2xl font-black tracking-widest text-text-primary placeholder-gray-300 dark:placeholder-gray-700 uppercase disabled:opacity-50"

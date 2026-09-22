@@ -4,8 +4,8 @@
 
 :root {
   /* Design System Palette */
-  --brand-green: #22c55e;
-  --action-orange: #f97316;
+  --brand-green: #059669; /* emerald-600 for WCAG 4.5:1 contrast */
+  --action-orange: #ea580c; /* orange-600 */
   --text-primary: #111827;
   --canvas-base: #f9fafb;
   --error-red: #ef4444;

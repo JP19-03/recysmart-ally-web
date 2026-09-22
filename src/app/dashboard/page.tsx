@@ -27,20 +27,16 @@ export default function DashboardPOS() {
             {isMetricsLoading ? (
               <>
                 {/* Stats Card Skeleton 1 */}
-                <div className="bg-card border border-border p-5 rounded-2xl shadow-xs animate-pulse space-y-4">
+                <div className="bg-card border border-border p-5 rounded-2xl shadow-xs animate-pulse flex flex-col">
                   <div className="w-8 h-8 bg-canvas-base rounded-lg"></div>
-                  <div className="space-y-2">
-                    <div className="h-3 w-16 bg-canvas-base rounded-md"></div>
-                    <div className="h-6 w-10 bg-canvas-base rounded-md"></div>
-                  </div>
+                  <div className="h-3.5 w-16 bg-canvas-base rounded-md mt-2"></div>
+                  <div className="h-8 w-10 bg-canvas-base rounded-md mt-1"></div>
                 </div>
                 {/* Stats Card Skeleton 2 */}
-                <div className="bg-card border border-border p-5 rounded-2xl shadow-xs animate-pulse space-y-4">
+                <div className="bg-card border border-border p-5 rounded-2xl shadow-xs animate-pulse flex flex-col">
                   <div className="w-8 h-8 bg-canvas-base rounded-lg"></div>
-                  <div className="space-y-2">
-                    <div className="h-3 w-20 bg-canvas-base rounded-md"></div>
-                    <div className="h-6 w-12 bg-canvas-base rounded-md"></div>
-                  </div>
+                  <div className="h-3.5 w-20 bg-canvas-base rounded-md mt-2"></div>
+                  <div className="h-8 w-12 bg-canvas-base rounded-md mt-1"></div>
                 </div>
               </>
             ) : (
@@ -80,14 +76,17 @@ export default function DashboardPOS() {
                       key={n}
                       className="p-4 bg-canvas-base rounded-2xl border border-border animate-pulse space-y-3"
                     >
-                      <div className="flex justify-between items-center">
-                        <div className="space-y-1.5">
-                          <div className="h-3.5 w-24 bg-card rounded-md"></div>
-                          <div className="h-3 w-12 bg-card rounded-md"></div>
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="min-w-0 space-y-1 w-full">
+                          <div className="h-4 w-2/3 bg-card rounded-md"></div>
+                          <div className="h-3 w-1/3 bg-card rounded-md mt-1"></div>
                         </div>
                       </div>
-                      <div className="space-y-1.5 pt-1">
-                        <div className="h-2 w-16 bg-card rounded-md"></div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-center">
+                          <div className="h-2.5 w-24 bg-card rounded-md"></div>
+                          <div className="h-2.5 w-12 bg-card rounded-md"></div>
+                        </div>
                         <div className="h-1.5 w-full bg-card rounded-full"></div>
                       </div>
                     </div>

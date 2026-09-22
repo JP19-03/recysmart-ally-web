@@ -1,5 +1,5 @@
 import { DefaultSession, DefaultUser } from "next-auth";
-import { JWT } from "next-auth/jwt";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PartnerInfo } from "../schemas";
 
 export type AppRole = "ADMIN" | "RECYCLER" | "ALLY";
