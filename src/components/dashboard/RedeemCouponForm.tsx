@@ -25,7 +25,7 @@ export function RedeemCouponForm({ form, isLoading }: RedeemCouponFormProps) {
           <input
             id="code"
             type="text"
-            placeholder="EJ: RECY-A1B2C3D4E5F6..."
+            placeholder="EJ: RECY-7K9M2QXF"
             disabled={isLoading}
             {...register("code")}
             className="w-full text-center py-4 bg-transparent outline-none font-mono text-2xl font-black tracking-widest text-text-primary placeholder-gray-300 dark:placeholder-gray-700 uppercase disabled:opacity-50"
