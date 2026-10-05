@@ -195,18 +195,6 @@ export default function Login() {
                 <label htmlFor="password" className="font-bold text-sm text-text-primary">
                   Contraseña
                 </label>
-                <a
-                  href="#forgot"
-                  className="text-xs font-bold text-brand-green hover:underline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toast.info("Enlace de restablecimiento", {
-                      description: "Por favor, contacta con soporte para restablecer tu contraseña.",
-                    });
-                  }}
-                >
-                  ¿Olvidaste tu contraseña?
-                </a>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
